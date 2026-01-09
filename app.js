@@ -18,6 +18,7 @@ const users = [
 ]
 
 const secretKey = process.env.SECRET_KEY
+const secretRefreshKey = process.env.REFRESH_KEY
 
 const connection = mysql.createConnection({
 	host: 'localhost',
@@ -26,12 +27,75 @@ const connection = mysql.createConnection({
 	database: 'Tuotteet'
 })
 
+const generateAccessToken = (user) => {
+	return jwt.sign({
+		id: user.id,
+		isAdmin: user.isAdmin
+	}, secretKey,
+		{ expiresIn: "15m" })
+}
+
+const generateRefreshToken = (user) => {
+	return jwt.sign({
+		id: user.id,
+		isAdmin: user.isAdmin
+	}, secretRefreshKey)
+}
+
+const verify = (req, res, next) => {
+	const authHeader = req.headers.authorization
+	if (authHeader) {
+		const token = authHeader.split(" ")[1]
+
+		jwt.verify(token, secretKey, (err, user) => {
+			if (err) {
+				return res.status(403).json("Token is not valid")
+			}
+
+			req.user = user
+			next()
+		})
+	} else {
+		res.status(401).json("You are not authenticated!")
+	}
+}
+
 connection.connect((err) => {
 	if (err) {
 		console.log("Connection to database unsuccesful", err)
 	} else {
 		console.log("Connection to database succesful")
 	}
+
+})
+
+let refreshTokens = []
+
+app.post("/refresh", (req, res) => {
+	const refreshToken = req.body.token
+
+	if (!refreshToken) {
+		return res.status(401).json("You are not authenticated!")
+	}
+
+	if (!refreshTokens.includes(refreshToken)) {
+		return res.status(403).json("Refresh token is not valid")
+	}
+
+	jwt.verify(refreshToken, secretRefreshKey, (err, user) => {
+		err && console.log(err)
+		refreshTokens = refreshTokens.filter((token) => token !== refreshToken)
+
+		const newAccessToken = generateAccessToken(user)
+		const newRefreshToken = generateRefreshToken(user)
+
+		refreshTokens.push(newRefreshToken)
+
+		res.status(200).json({
+			accessToken: newAccessToken,
+			refreshToken: newRefreshToken
+		})
+	})
 
 })
 
@@ -43,7 +107,17 @@ app.post("/login", (req, res) => {
 	})
 
 	if (user) {
-		const accessToken = jwt.sign({ id: user.id, isAdmin: user.isAdmin })
+		const accessToken = generateAccessToken(user)
+		const refreshToken = generateRefreshToken(user)
+
+		refreshTokens.push(refreshToken)
+
+		res.json({
+			username: user.username,
+			isAdmin: user.isAdmin,
+			accessToken,
+			refreshToken
+		})
 	} else {
 		res.status(400).json("Username or password incorrect")
 	}
