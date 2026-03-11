@@ -42,6 +42,7 @@ const generateRefreshToken = (user) => {
 	}, secretRefreshKey)
 }
 
+
 const verify = (req, res, next) => {
 	const authHeader = req.headers.authorization
 	if (authHeader) {
@@ -67,6 +68,12 @@ connection.connect((err) => {
 		console.log("Connection to database succesful")
 	}
 
+})
+
+app.post("/logout", verify, (req, res) => {
+	const refreshToken = req.body.token;
+	refreshTokens = refreshTokens.filter((token) => token !== refreshToken)
+	res.status(200).json("You logged out succesfully.")
 })
 
 let refreshTokens = []
@@ -102,7 +109,7 @@ app.post("/refresh", (req, res) => {
 app.post("/login", (req, res) => {
 	const { username, password } = req.body
 
-	const user = users.find(u => {
+	const user = users.find((u) => {
 		return u.username === username && u.password === password
 	})
 
