@@ -8,14 +8,14 @@ app.use(express.json())
 app.use(cors())
 require("dotenv").config()
 
-const users = [
-	{
-		id: 1,
-		username: "muokkaaja",
-		password: "muokkaaja123",
-		isAdmin: true
-	}
-]
+// const users = [
+// 	{
+// 		id: 1,
+// 		username: "muokkaaja",
+// 		password: "muokkaaja123",
+// 		isAdmin: true
+// 	}
+// ]
 
 const secretKey = process.env.SECRET_KEY
 const secretRefreshKey = process.env.REFRESH_KEY
@@ -24,7 +24,7 @@ const connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'node_kayttaja',
 	password: '2314Juustokakku!',
-	database: 'Tuotteet'
+	database: 'rautakauppa'
 })
 
 const generateAccessToken = (user) => {
@@ -106,28 +106,40 @@ app.post("/refresh", (req, res) => {
 
 })
 
+app.post("/query", (req, res) => {
+	const { product, changeInventoryAmountTo, idNumber } = req.body
+
+	console.log(product)
+})
+
 app.post("/login", (req, res) => {
 	const { username, password } = req.body
 
-	const user = users.find((u) => {
-		return u.username === username && u.password === password
+	connection.query('SELECT * FROM kayttajat', (err, results) => {
+
+		const user = results.find((u) => {
+			return u.NIMI === username && u.SALASANA === password
+		})
+
+		if (user) {
+			const accessToken = generateAccessToken(user)
+			const refreshToken = generateRefreshToken(user)
+
+			refreshTokens.push(refreshToken)
+
+			res.json({
+				username: user.username,
+				isAdmin: user.isAdmin,
+				accessToken,
+				refreshToken,
+			})
+			console.log(results)
+		} else {
+			res.status(400).json("Username or password incorrect")
+		}
 	})
 
-	if (user) {
-		const accessToken = generateAccessToken(user)
-		const refreshToken = generateRefreshToken(user)
 
-		refreshTokens.push(refreshToken)
-
-		res.json({
-			username: user.username,
-			isAdmin: user.isAdmin,
-			accessToken,
-			refreshToken
-		})
-	} else {
-		res.status(400).json("Username or password incorrect")
-	}
 })
 
 app.get('/', (req, res) => {
