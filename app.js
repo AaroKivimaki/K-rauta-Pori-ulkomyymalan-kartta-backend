@@ -106,10 +106,18 @@ app.post("/refresh", (req, res) => {
 
 })
 
-app.post("/query", (req, res) => {
-	const { product, changeInventoryAmountTo, idNumber } = req.body
+app.put("/update/:id", (req, res) => {
+	const id = req.params.id
+	const amount = req.body.changeInventoryAmountTo
 
-	console.log(product)
+	connection.query('UPDATE raaka_puut SET saldo=? WHERE id=?', [amount, id], (err, results) => {
+		if (err) {
+			console.log(err)
+		} else {
+			res.send("Updated")
+			console.log(results)
+		}
+	})
 })
 
 app.post("/login", (req, res) => {
