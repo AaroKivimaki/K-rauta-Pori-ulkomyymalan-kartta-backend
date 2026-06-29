@@ -150,7 +150,7 @@ app.post("/login", (req, res) => {
 
 })
 
-app.get('/', (req, res) => {
+app.get('/puut', (req, res) => {
 	connection.query('SELECT * FROM raaka_puut', (err, results) => {
 
 		if (err) {
