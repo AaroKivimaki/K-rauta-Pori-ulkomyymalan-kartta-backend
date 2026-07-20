@@ -3,6 +3,9 @@
 Verkkosivulla ei ole käytetty mitään oikeaa Porin K-raudan tai ylipäätänsä Keskoon liittyviä tietoja esim. tuotetietoja, tuotteiden saldomääriä ja muita.
 Tällä hetkellä kaikki tiedot ovat päästä tekaistuja ja kauppiaalta on kysytty lupa tämän projektin julkaisemiseen.
 
+## Käytetty teknologia
+* Node.js, Express.js
+
 ## Verkkosivun ominaisuuksia
 * Katso tuotteiden paikat ulkomyymälästä
 * Tarkastele kuinka paljon kyseistä tuottetta löytyy tällä hetkellä
