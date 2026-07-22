@@ -5,6 +5,7 @@ Tällä hetkellä kaikki tiedot ovat päästä tekaistuja ja kauppiaalta on kysy
 
 ## Käytetty teknologia
 * Node.js, Express.js
+* Tietokantana MySQL
 
 ## Verkkosivun ominaisuuksia
 * Katso tuotteiden paikat ulkomyymälästä
@@ -14,3 +15,6 @@ Tällä hetkellä kaikki tiedot ovat päästä tekaistuja ja kauppiaalta on kysy
 ## Mistä idea syntyi
 Jotkut henkilöt suunnittelevat kauppareissua vähän aikaisemmin ennen kauppaan menoa ja yhtenä asiana jota he suunnittelevat on, että mistä tarvittavia tuotteita löytyy. Ainakin siis rautakauppoihin koskien. </br>
 Monille ihmisille varsinkin ulkomyymälään saapuessa tulee sellainen tunne, että missä päin nyt kaikkia tavaroita on ja minne päin täällä nyt täytyisi ajaa. Verkkosivun avulla näkee jo ennen kauppaan tuloa mistä päin tavaraa löytyy.
+
+## Linkki frontendiin
+Tämä on verkkosivun backend repo ja seuraavasta linkistä pääsee frontend repoon: https://github.com/AaroKivimaki/K-rauta-Pori-ulkomyymalan-kartta
